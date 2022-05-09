@@ -54,24 +54,37 @@ function App(props) {
     return newGrid;
   }
 
-  function countNeighborBombs(i, j) {
+  function getNeighbors(i, j) {
     let neighbors = [[i+1,j], [i-1,j], [i,j+1], [i,j-1], 
       [i+1,j+1], [i-1,j-1], [i+1,j-1], [i-1,j+1]];
+    return neighbors.filter(([neigh_i, neigh_j]) => (neigh_i >= 0 && neigh_i < rows && neigh_j >= 0 && neigh_j < cols));
+  }
+
+  function countNeighborBombs(grid, i, j) {
     let cnt = 0;
-    for (let c=0; c<8; c++) {
-      let [neigh_i, neigh_j] = neighbors[c];
-      if (neigh_i >= 0 && neigh_i < rows && neigh_j >= 0 && neigh_j < cols) {
-        cnt += (grid[neigh_i][neigh_j].bomb ? 1 : 0);
-      }
+    for (let [neigh_i, neigh_j] of getNeighbors(i, j)) {
+      cnt += (grid[neigh_i][neigh_j].bomb ? 1 : 0);
     }
     return cnt;
+  }
+
+  function clickAtIndex(copyGrid, i, j) {
+    if (copyGrid[i][j].clicked) {
+      return;
+    }
+    copyGrid[i][j].clicked = true;
+    if (countNeighborBombs(copyGrid, i, j) === 0 && !copyGrid[i][j].bomb) {
+      for (let [neigh_i, neigh_j] of getNeighbors(i, j)) {
+        clickAtIndex(copyGrid, neigh_i, neigh_j);
+      }
+    }
   }
 
   function handleCellClick(e, i, j) {
     let copyGrid = deepCopyGrid();
 
     if (e.type === "click") {
-      copyGrid[i][j].clicked = true;
+      clickAtIndex(copyGrid, i, j);
       setClicks(numClicks+1);
     } else {
       if (copyGrid[i][j].flagged) {
@@ -98,7 +111,7 @@ function App(props) {
         clicked={clicked}
         bomb={bomb}
         flagged={flagged}
-        neighborBombCount={countNeighborBombs(i, j)}
+        neighborBombCount={countNeighborBombs(grid, i, j)}
         handleClick={(e) => handleCellClick(e, i, j)}
         isClickable={!isLost && !isWon}
       />);

@@ -30,7 +30,7 @@ function Cell(props) {
         );
       } else {
         return (
-          <div className="cell clicked">{neighborBombCount}</div>
+          <div className="cell clicked">{neighborBombCount > 0 ? neighborBombCount : null}</div>
         );
       }
     }
