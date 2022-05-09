@@ -70,3 +70,11 @@
 .cell.plain {
   background-color: black;
 }
+
+button {
+  display: flex;
+}
+
+.game-end-message {
+  display: flex;
+}

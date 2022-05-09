@@ -9,6 +9,10 @@ import './App.css';
 function Cell(props) {
 
   function handleClick(e) {
+    if (!props.isClickable) {
+      console.log("Game is over, reset to start a new game");
+      return;
+    }
     props.handleClick(e);
   }
 
@@ -22,11 +26,11 @@ function Cell(props) {
     if (clicked) {
       if (bomb) {
         return (
-          <div className="cell exploded" onContextMenu={handleClick}></div>
+          <div className="cell exploded"></div>
         );
       } else {
         return (
-          <div className="cell clicked" onContextMenu={handleClick}>{neighborBombCount}</div>
+          <div className="cell clicked">{neighborBombCount}</div>
         );
       }
     }
